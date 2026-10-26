@@ -6,6 +6,7 @@ import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { CATEGORIES } from "@/lib/constants";
+import AiAssistant from "@/components/organizer/AiAssistant";
 
 const formSchema = z
   .object({
@@ -47,6 +48,7 @@ export default function EventForm({ eventId, initial }: Props) {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<EventFormValues>({
     resolver: zodResolver(formSchema),
@@ -104,109 +106,118 @@ export default function EventForm({ eventId, initial }: Props) {
     msg && <p className="mt-1 text-sm text-red-600">{msg}</p>;
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className="space-y-5 rounded-2xl border bg-white p-6 shadow-sm"
-    >
-      <div>
-        <label className="mb-1 block text-sm font-medium">Event title</label>
-        <input
-          {...register("title")}
-          className={input}
-          placeholder="Tree Plantation Drive"
-        />
-        {err(errors.title?.message)}
-      </div>
+    <div className="space-y-6">
+      <AiAssistant
+        onApply={(r) => {
+          setValue("description", r.description, { shouldValidate: true });
+          setValue("skills", r.skills.join(", "), { shouldValidate: true });
+        }}
+      />
 
-      <div>
-        <label className="mb-1 block text-sm font-medium">Description</label>
-        <textarea {...register("description")} rows={5} className={input} />
-        {err(errors.description?.message)}
-      </div>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="space-y-5 rounded-2xl border bg-white p-6 shadow-sm"
+      >
+        <div>
+          <label className="mb-1 block text-sm font-medium">Event title</label>
+          <input
+            {...register("title")}
+            className={input}
+            placeholder="Tree Plantation Drive"
+          />
+          {err(errors.title?.message)}
+        </div>
 
-      <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <label className="mb-1 block text-sm font-medium">Event date</label>
-          <input type="date" {...register("date")} className={input} />
-          {err(errors.date?.message)}
+          <label className="mb-1 block text-sm font-medium">Description</label>
+          <textarea {...register("description")} rows={5} className={input} />
+          {err(errors.description?.message)}
         </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium">
-            Registration deadline
-          </label>
-          <input
-            type="date"
-            {...register("registrationDeadline")}
-            className={input}
-          />
-          {err(errors.registrationDeadline?.message)}
-        </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium">Location</label>
-          <input
-            {...register("location")}
-            className={input}
-            placeholder="Chittagong"
-          />
-          {err(errors.location?.message)}
-        </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium">Category</label>
-          <select {...register("category")} className={input}>
-            <option value="">Select category</option>
-            {CATEGORIES.map((c) => (
-              <option key={c} value={c}>
-                {c}
-              </option>
-            ))}
-          </select>
-          {err(errors.category?.message)}
-        </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium">
-            Maximum volunteers
-          </label>
-          <input
-            {...register("capacity")}
-            inputMode="numeric"
-            className={input}
-            placeholder="20"
-          />
-          {err(errors.capacity?.message)}
-        </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium">
-            Required skills
-          </label>
-          <input
-            {...register("skills")}
-            className={input}
-            placeholder="Planting, Logistics"
-          />
-          {err(errors.skills?.message)}
-        </div>
-      </div>
 
-      <div className="flex justify-end gap-3">
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="rounded-lg border px-4 py-2 text-sm hover:bg-gray-50"
-        >
-          Cancel
-        </button>
-        <button
-          type="submit"
-          disabled={isSubmitting}
-          className="rounded-lg bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-60"
-        >
-          {isSubmitting
-            ? "Saving..."
-            : isEdit
-              ? "Save changes"
-              : "Create event"}
-        </button>
-      </div>
-    </form>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <div>
+            <label className="mb-1 block text-sm font-medium">Event date</label>
+            <input type="date" {...register("date")} className={input} />
+            {err(errors.date?.message)}
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium">
+              Registration deadline
+            </label>
+            <input
+              type="date"
+              {...register("registrationDeadline")}
+              className={input}
+            />
+            {err(errors.registrationDeadline?.message)}
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium">Location</label>
+            <input
+              {...register("location")}
+              className={input}
+              placeholder="Chittagong"
+            />
+            {err(errors.location?.message)}
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium">Category</label>
+            <select {...register("category")} className={input}>
+              <option value="">Select category</option>
+              {CATEGORIES.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+            {err(errors.category?.message)}
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium">
+              Maximum volunteers
+            </label>
+            <input
+              {...register("capacity")}
+              inputMode="numeric"
+              className={input}
+              placeholder="20"
+            />
+            {err(errors.capacity?.message)}
+          </div>
+          <div>
+            <label className="mb-1 block text-sm font-medium">
+              Required skills
+            </label>
+            <input
+              {...register("skills")}
+              className={input}
+              placeholder="Planting, Logistics"
+            />
+            {err(errors.skills?.message)}
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-3">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="rounded-lg border px-4 py-2 text-sm hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="rounded-lg bg-indigo-600 px-5 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-60"
+          >
+            {isSubmitting
+              ? "Saving..."
+              : isEdit
+                ? "Save changes"
+                : "Create event"}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 }
