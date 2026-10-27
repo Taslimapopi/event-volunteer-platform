@@ -2,7 +2,7 @@
 
 A Next.js app where organizers publish community events and manage volunteers, and volunteers discover events, register, and manage their participation.
 
-- **Live:** https://YOUR-APP.vercel.app
+- **Live:** https://event-volunteer-platform.vercel.app
 - **Repo:** https://github.com/Taslimapopi/event-volunteer-platform
 
 ## Demo credentials
